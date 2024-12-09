@@ -110,7 +110,6 @@ import {
   defineSchema,
   defineStreamingFlow,
   Flow,
-  FlowConfig,
   FlowFn,
   FlowServer,
   FlowServerOptions,
@@ -136,6 +135,7 @@ import { BaseEvalDataPointSchema } from './evaluator.js';
 import { logger } from './logging.js';
 import { GenkitPlugin, genkitPlugin } from './plugin.js';
 import { Registry } from './registry.js';
+import { toJsonSchema } from './schema.js';
 import { toToolDefinition } from './tool.js';
 
 /**
@@ -202,7 +202,11 @@ export class Genkit {
   defineFlow<
     I extends z.ZodTypeAny = z.ZodTypeAny,
     O extends z.ZodTypeAny = z.ZodTypeAny,
-  >(config: FlowConfig<I, O> | string, fn: FlowFn<I, O>): CallableFlow<I, O> {
+    S extends z.ZodTypeAny = z.ZodTypeAny,
+  >(
+    config: StreamingFlowConfig<I, O, S> | string,
+    fn: FlowFn<I, O, S>
+  ): CallableFlow<I, O, S> {
     const flow = defineFlow(this.registry, config, fn);
     this.registeredFlows.push(flow.flow);
     return flow;
@@ -211,7 +215,7 @@ export class Genkit {
   /**
    * Defines and registers a streaming flow.
    *
-   * @todo TODO: Improve this documentation (show snippetss, etc).
+   * @deprecated use {@link defineFlow}
    */
   defineStreamingFlow<
     I extends z.ZodTypeAny = z.ZodTypeAny,
@@ -462,10 +466,15 @@ export class Genkit {
           if (!response.tools && options.tools) {
             response.tools = (
               await resolveTools(this.registry, options.tools)
-            ).map(toToolDefinition);
+            ).map((t) => toToolDefinition(t));
           }
           if (!response.output && options.output) {
-            response.output = options.output;
+            response.output = {
+              schema: toJsonSchema({
+                schema: options.output.schema,
+                jsonSchema: options.output.jsonSchema,
+              }),
+            };
           }
           return response;
         }
