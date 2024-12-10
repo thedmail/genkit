@@ -2,7 +2,7 @@
 name: Go runtime bug report
 about: Create a report for Go runtime
 title: "[Go]"
-labels: bug, go
+labels: bug
 assignees: ''
 
 ---

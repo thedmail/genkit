@@ -2,7 +2,7 @@
 name: JS runtime bug report
 about: Create a report for JS runtime
 title: "[JS] "
-labels: bug, js
+labels: bug
 assignees: ''
 
 ---
