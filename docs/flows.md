@@ -224,7 +224,7 @@ some unspecified method, and the second step includes the menu as context for a
 `generate()` call.
 
 ```ts
-import { run } from "genkit";
+import { run } from 'genkit';
 {% includecode github_path="firebase/genkit/js/doc-snippets/src/flows/index.ts" region_tag="ex11" adjust_indentation="auto" %}
 ```
 
